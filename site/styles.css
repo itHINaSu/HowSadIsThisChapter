@@ -1,17 +1,19 @@
 /* Mirrors the look of howsadisthischapter.com: Archivo Black + DM Sans,
-   2px ink borders, hard offset shadows, an orange hero and highlighter
+   2px ink borders, hard offset shadows, a pink hero and highlighter
    badges. The colour tokens below are the only thing to change if you
    want an exact match with the site's palette. */
 :root {
-  --background: #fff8ee;
-  --foreground: #141210;
-  --card: #ffffff;
-  --muted: #efe6da;
-  --muted-foreground: #6a5f54;
-  --primary: #ff5c39;
-  --primary-foreground: #141210;
-  --highlight: #ffd93d;
-  --highlight-foreground: #141210;
+  /* Light mode: derived from the site's dark palette (same hues), until
+     the exact light values are confirmed. */
+  --background: oklch(98% .008 350);
+  --foreground: oklch(16% .012 350);
+  --card: oklch(100% 0 0);
+  --muted: oklch(93% .012 350);
+  --muted-foreground: oklch(45% .015 350);
+  --primary: oklch(74% .21 350);
+  --primary-foreground: oklch(16% .012 350);
+  --highlight: oklch(85% .18 101);
+  --highlight-foreground: oklch(16% .012 350);
 
   /* sadness scale, 1 (barely) to 5 (devastating) */
   --s1: #8fd694;
@@ -24,14 +26,17 @@
   --display: "Archivo Black", "Arial Black", Impact, sans-serif;
   color-scheme: light;
 }
+/* Dark mode: exact values from howsadisthischapter.com */
 :root.dark {
-  --background: #141210;
-  --foreground: #f7efe4;
-  --card: #1f1b17;
-  --muted: #2e2822;
-  --muted-foreground: #b4a899;
-  --primary: #ff6b4a;
-  --primary-foreground: #141210;
+  --background: oklch(13% .01 350);
+  --foreground: oklch(97% .005 350);
+  --card: oklch(19% .012 350);
+  --muted: oklch(25% .012 350);
+  --muted-foreground: oklch(75% .012 350);
+  --primary: oklch(74% .21 350);
+  --primary-foreground: oklch(13% .01 350);
+  --highlight: oklch(85% .18 101);
+  --highlight-foreground: oklch(13% .01 350);
   color-scheme: dark;
 }
 
@@ -137,7 +142,7 @@ img { display: block; }
 .author { margin: 6px 0 0; font-size: .85rem; font-weight: 700; color: var(--muted-foreground); overflow-wrap: anywhere; }
 .series-line { margin: 3px 0 0; font-size: .7rem; font-weight: 900; text-transform: uppercase; color: var(--primary); }
 .card-foot { margin-top: auto; padding-top: 8px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; border-top: 1px solid color-mix(in srgb, var(--foreground) 30%, transparent); font-size: .7rem; font-weight: 900; text-transform: uppercase; }
-.card-foot .peak { padding: 1px 6px; border: 2px solid var(--foreground); color: #141210; }
+.card-foot .peak { padding: 1px 6px; border: 2px solid var(--foreground); color: var(--highlight-foreground); }
 .more { display: flex; justify-content: center; margin-top: 28px; }
 
 /* Book page */
@@ -161,8 +166,8 @@ fieldset.panel { min-width: 0; }
 .panel p { margin: 6px 0 0; font-size: .9rem; font-weight: 700; color: var(--muted-foreground); }
 .panel select { width: 100%; min-height: 48px; margin-top: 10px; padding: 8px 10px; border: 2px solid var(--foreground); border-radius: 6px; background: var(--background); font-weight: 700; }
 .ahead { margin-top: 12px !important; padding: 10px 12px; border: 2px solid var(--foreground); color: var(--foreground) !important; }
-.ahead.hot { background: var(--s5); color: #141210 !important; }
-.ahead.ok { background: var(--s1); color: #141210 !important; }
+.ahead.hot { background: var(--s5); color: #110b0e !important; }
+.ahead.ok { background: var(--s1); color: #110b0e !important; }
 .ahead.unknown { background: var(--muted); }
 .two { display: grid; gap: 8px; margin-top: 10px; }
 @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
