@@ -1,0 +1,12 @@
+{
+  "name": "how-sad-is-this-chapter-pwa",
+  "private": true,
+  "type": "module",
+  "description": "Mobile-friendly PWA for howsadisthischapter.com ratings",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test scripts/parse.test.mjs",
+    "build-data": "node scripts/build-data.mjs",
+    "serve": "python3 -m http.server 8080 --directory site"
+  }
+}

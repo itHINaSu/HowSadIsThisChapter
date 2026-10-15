@@ -1,0 +1,5 @@
+node_modules/
+site/api/
+site/api.tmp/
+site/api.old/
+.env

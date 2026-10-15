@@ -1,0 +1,7 @@
+.git
+node_modules
+site/api
+site/api.tmp
+site/api.old
+scripts/fixtures
+*.md

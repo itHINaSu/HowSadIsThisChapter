@@ -1,0 +1,26 @@
+services:
+  web:
+    build:
+      context: .
+      target: web
+    ports:
+      - "${PORT:-8080}:80"
+    volumes:
+      - data:/data:ro
+    restart: unless-stopped
+
+  updater:
+    build:
+      context: .
+      target: updater
+    environment:
+      # Hours between refreshes of the ratings data.
+      UPDATE_INTERVAL_HOURS: "${UPDATE_INTERVAL_HOURS:-24}"
+      # Pause between book page requests, to stay gentle on the site.
+      DELAY_MS: "${DELAY_MS:-600}"
+    volumes:
+      - data:/data
+    restart: unless-stopped
+
+volumes:
+  data:
