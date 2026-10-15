@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>How Sad Is This Chapter?</title>
-  <meta name="description" content="Check a book chapter's emotional intensity and content warnings without plot spoilers. A phone-friendly companion to howsadisthischapter.com.">
+  <title>How Sad? · Unofficial mobile reader</title>
+  <meta name="description" content="An unofficial, fan-made mobile reader for howsadisthischapter.com. Not affiliated with or endorsed by the site; all ratings belong to its creator and community.">
   <meta name="theme-color" content="#ff67bd">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -24,7 +24,7 @@
 <body>
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="#/" class="brand">How sad is this chapter?</a>
+      <a href="#/" class="brand">How sad? <span class="unofficial">Unofficial</span></a>
       <button type="button" class="btn btn-sm btn-outline" id="about-btn">About</button>
     </div>
   </nav>
@@ -35,12 +35,15 @@
 
   <footer class="footer">
     <div class="footer-inner">
-      <p class="font-display upper">Spoilers? In this economy?</p>
-      <p class="small bold">Ratings from real readers on <a href="https://howsadisthischapter.com" target="_blank" rel="noopener">howsadisthischapter.com</a>.</p>
+      <div class="disclaimer" role="note">
+        <p class="font-display upper">Unofficial fan-made front end</p>
+        <p class="small bold">This app is not How Sad Is This Chapter? and is not made, run, affiliated with or endorsed by its creator. It's an independent, read-only front end that displays public data from <a href="https://howsadisthischapter.com" target="_blank" rel="noopener">howsadisthischapter.com</a>.</p>
+        <p class="small bold">All credit for the original site, its idea, design and ratings goes to its creator and the readers who rate there. Please visit, rate and support the original.</p>
+      </div>
       <div class="tip">
-        <p class="font-display upper">Enjoying the site?</p>
-        <p class="small bold dim">Help keep the shelves stocked: tip the booktender. Totally optional, always appreciated.</p>
-        <a class="btn btn-primary" href="https://ko-fi.com/catieosaurus" target="_blank" rel="noopener">Tip your booktender</a>
+        <p class="font-display upper">Enjoying the ratings?</p>
+        <p class="small bold dim">Tips go straight to the original site's creator, not to this app.</p>
+        <a class="btn btn-primary" href="https://ko-fi.com/catieosaurus" target="_blank" rel="noopener">Tip the original creator</a>
       </div>
       <p class="small dim" id="updated"></p>
     </div>
@@ -49,8 +52,10 @@
   <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch theme"></button>
 
   <dialog id="about">
-    <h2 class="font-display">About this app</h2>
-    <p>A phone-friendly way to browse <a href="https://howsadisthischapter.com" target="_blank" rel="noopener">How Sad Is This Chapter?</a>. Every rating comes from readers on that site. This is an unofficial companion, not run by the site's team.</p>
+    <h2 class="font-display">Unofficial app</h2>
+    <p>This is an independent, fan-made front end for <a href="https://howsadisthischapter.com" target="_blank" rel="noopener">How Sad Is This Chapter?</a>. It is <strong>not</strong> made, run, affiliated with or endorsed by that site or its creator.</p>
+    <p>All credit for the site, its idea and its design belongs to its creator, and every rating comes from readers on the original site. This app only reformats that public data for phones.</p>
+    <p>Spotted a problem with a rating or book? Report it on the original site. Problems with this app itself have nothing to do with them.</p>
     <p>To rate a book or add a new one, use the main site. Changes show up here after the next update.</p>
     <p>Add it to your home screen from your browser's share or menu button to use it like an app.</p>
     <form method="dialog"><button class="btn btn-primary">Got it</button></form>

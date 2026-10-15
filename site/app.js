@@ -145,9 +145,9 @@ async function renderHome() {
     <section class="hero">
       <div class="hero-mark" aria-hidden="true">?</div>
       <div class="hero-inner">
-        <p class="badge">Crowdsourcing emotional regulation, one book at a time</p>
-        <h1>How Sad Is This Chapter</h1>
-        <p class="lede">Find out how emotionally devastating a chapter is before you read it.</p>
+        <p class="badge">Unofficial mobile reader</p>
+        <h1>How Sad?</h1>
+        <p class="lede">Chapter sadness ratings from <a href="https://howsadisthischapter.com" target="_blank" rel="noopener">How Sad Is This Chapter?</a>, reformatted for your phone. Not affiliated with the original site.</p>
         <label class="search-box">
           ${ICON_SEARCH}
           <input id="search" type="search" placeholder="Search a title, author or series" aria-label="Search for a book" value="${esc(state.query)}" autocomplete="off" enterkeyhint="search">

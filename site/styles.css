@@ -64,6 +64,8 @@ img { display: block; }
 .nav { border-bottom: 2px solid var(--foreground); padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top)); }
 .nav-inner { max-width: 72rem; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 12px; }
 .brand { font-family: var(--display); text-transform: uppercase; font-size: .9rem; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.unofficial { display: inline-block; margin-left: 6px; padding: 1px 6px; vertical-align: middle; border: 2px solid var(--foreground); background: var(--highlight); color: var(--highlight-foreground); font-family: var(--font); font-size: .62rem; font-weight: 900; letter-spacing: .04em; }
+.disclaimer { padding-bottom: 6px; }
 .back { display: inline-flex; align-items: center; gap: 6px; font-weight: 900; font-size: .9rem; text-decoration: none; min-height: 44px; }
 
 /* Buttons */

@@ -1,7 +1,7 @@
 {
-  "name": "How Sad Is This Chapter?",
+  "name": "How Sad? (Unofficial reader)",
   "short_name": "How Sad?",
-  "description": "Check how sad each chapter of a book is before you read it.",
+  "description": "Unofficial, fan-made mobile reader for howsadisthischapter.com. Not affiliated with the original site.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

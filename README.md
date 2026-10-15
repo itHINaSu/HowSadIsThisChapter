@@ -1,9 +1,15 @@
-# How Sad? — mobile companion for How Sad Is This Chapter?
+# How Sad? — unofficial mobile reader for How Sad Is This Chapter?
 
 A phone-friendly, installable web app (PWA) for browsing chapter sadness
 ratings and content warnings from [howsadisthischapter.com](https://howsadisthischapter.com).
-It is an unofficial, read-only companion: all ratings come from that site,
-and "Rate this book" buttons send you there.
+
+> **Disclaimer:** this is an independent, fan-made front end. It is not
+> made, run, affiliated with or endorsed by How Sad Is This Chapter? or its
+> creator. All credit for the original site, its concept, design and
+> ratings belongs to its creator and the readers who rate there. This app
+> only reads public data and reformats it for phones; "Rate this book"
+> buttons send you to the original site. If the site's owner would like
+> this changed or taken down, open an issue and it will be.
 
 ## Run it
 
