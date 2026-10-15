@@ -7,11 +7,28 @@ and "Rate this book" buttons send you there.
 
 ## Run it
 
+You only need [`docker-compose.yml`](docker-compose.yml). The images are
+built by GitHub Actions and published to `ghcr.io/ithinasu/`.
+
 ```sh
-docker compose up -d --build
+mkdir howsad && cd howsad
+curl -fsSLO https://raw.githubusercontent.com/itHINaSu/HowSadIsThisChapter/HEAD/docker-compose.yml
+docker compose up -d
 ```
 
 Then open `http://<your-server>:8080` on your phone.
+
+**Updating the app:** every push to the repo publishes new images, so
+
+```sh
+docker compose pull && docker compose up -d
+```
+
+Your ratings data lives in the `data` volume and survives updates. To pin a
+specific build instead of `latest`, set `TAG=sha-<commit>` in `.env`.
+
+To build from a checkout instead of pulling:
+`docker compose -f docker-compose.yml -f compose.build.yml up -d --build`.
 
 The first data build takes about 10–15 minutes (it fetches every book page
 politely, one at a time). Until it finishes, the app says the library is
@@ -24,6 +41,7 @@ Settings (put them in a `.env` file next to `docker-compose.yml`):
 | `PORT` | `8080` | Port the app is served on |
 | `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
 | `DELAY_MS` | `600` | Pause between book page requests |
+| `TAG` | `latest` | Image tag to run (`latest`, a branch name, or `sha-<commit>`) |
 
 Watch an update with `docker compose logs -f updater`.
 

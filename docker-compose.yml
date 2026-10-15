@@ -1,8 +1,9 @@
+# Uses the images GitHub Actions publishes on every push. To update:
+#   docker compose pull && docker compose up -d
+# To build from a local checkout instead, see compose.build.yml.
 services:
   web:
-    build:
-      context: .
-      target: web
+    image: ghcr.io/ithinasu/howsadisthischapter-web:${TAG:-latest}
     ports:
       - "${PORT:-8080}:80"
     volumes:
@@ -10,9 +11,7 @@ services:
     restart: unless-stopped
 
   updater:
-    build:
-      context: .
-      target: updater
+    image: ghcr.io/ithinasu/howsadisthischapter-updater:${TAG:-latest}
     environment:
       # Hours between refreshes of the ratings data.
       UPDATE_INTERVAL_HOURS: "${UPDATE_INTERVAL_HOURS:-24}"
