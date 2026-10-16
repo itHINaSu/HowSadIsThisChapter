@@ -34,7 +34,7 @@ const prefs = {
   filters: () => ({ ...DEFAULT_FILTERS, ...store.get("filters", {}) }),
 };
 // Keys exported/imported by "Your data" (stored raw, as localStorage holds them).
-const DATA_KEYS = ["mood", "avoid", "show-warnings", "shelf", "filters", "text-size", "sadness-theme"];
+const DATA_KEYS = ["mood", "avoid", "show-warnings", "shelf", "filters", "text-size", "sadness-theme", "install-dismissed"];
 
 // shelf[slug] = { status: "reading" | "finished" | "bailed" | undefined, chapter: index | null, updated }
 function updateShelf(slug, patch) {
@@ -356,6 +356,7 @@ async function renderLibrary(params) {
         </label>
       </div>
     </section>
+    ${installBanner()}
     <section class="section wrap">
       <div class="section-head">
         <div>
@@ -386,6 +387,7 @@ async function renderLibrary(params) {
     </dialog>`;
 
   const search = document.getElementById("search");
+  bindInstall(view);
   search.addEventListener("input", () => {
     state.query = search.value;
     state.shown = PAGE_SIZE;
@@ -793,7 +795,129 @@ function applyTextSize(size) {
   if (size && size !== "normal") root.classList.add(`text-${size}`);
 }
 
-async function renderMe() {
+// ---------- installing the app ----------
+
+const isInstalled = () =>
+  matchMedia("(display-mode: standalone)").matches ||
+  matchMedia("(display-mode: fullscreen)").matches ||
+  navigator.standalone === true;
+
+// Chrome, Edge and Brave (Android and desktop) offer a one-tap install.
+let installPrompt = null;
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  installPrompt = e;
+  refreshInstall();
+});
+window.addEventListener("appinstalled", () => {
+  installPrompt = null;
+  document.querySelectorAll("[data-install]").forEach((el) => el.remove());
+});
+
+function platform() {
+  const ua = navigator.userAgent;
+  if (/iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return "ios";
+  if (/Android/.test(ua)) return "android";
+  if (/Firefox\//.test(ua)) return "firefox";
+  if (/Safari\//.test(ua) && !/Chrome|Chromium|Edg\//.test(ua)) return "mac";
+  return "desktop";
+}
+
+const glyph = (paths) => `<svg class="glyph" viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+const GLYPH = {
+  share: glyph('<path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path d="M8 10H6a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-2"/>'),
+  more: glyph('<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>'),
+  addHome: glyph('<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>'),
+  menu: glyph('<circle cx="12" cy="5" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="12" cy="19" r="1.3"/>'),
+  install: glyph('<rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 7v6M9 10.5l3 3 3-3"/><path d="M8 20h8"/>'),
+};
+
+const INSTALL_STEPS = {
+  ios: ["iPhone and iPad", [
+    `Tap the <strong>Share</strong> button ${GLYPH.share}. In Safari it may be inside the ${GLYPH.more} menu.`,
+    `Scroll down and tap <strong>Add to Home Screen</strong> ${GLYPH.addHome}.`,
+    "If you see <strong>Open as Web App</strong>, leave it on, then tap <strong>Add</strong>.",
+  ]],
+  android: ["Android", [
+    `Tap the browser's menu button ${GLYPH.menu}.`,
+    "Tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.",
+    "Tap <strong>Install</strong> to confirm.",
+  ]],
+  desktop: ["Chrome, Edge or Brave on a computer", [
+    `Click the install icon ${GLYPH.install} at the right end of the address bar.`,
+    "Or open the browser menu and look for <strong>Install</strong> (in Chrome it's under <strong>Cast, save and share</strong>; in Edge, under <strong>Apps</strong>).",
+  ]],
+  mac: ["Safari on a Mac", [
+    "Choose <strong>File → Add to Dock</strong> (macOS Sonoma or later).",
+  ]],
+  firefox: ["Firefox on a computer", [
+    "Most versions of Firefox on computers can't install web apps. Open this page in Chrome, Edge, Brave or Safari to install it.",
+  ]],
+};
+
+const stepList = ([, steps]) => `<ol class="steps">${steps.map((t) => `<li>${t}</li>`).join("")}</ol>`;
+
+function installSteps() {
+  const here = platform();
+  const others = ["ios", "android", "desktop", "mac"].filter((k) => k !== here);
+  return `
+    ${installPrompt ? `<button type="button" class="btn btn-primary" data-install-now>Install the app</button>` : stepList(INSTALL_STEPS[here])}
+    ${isSecureContext ? "" : `<p class="small">This server doesn't use HTTPS, so some browsers will only add a shortcut, and the app won't work offline.</p>`}
+    <details class="other-devices">
+      <summary>Other devices</summary>
+      ${others.map((k) => `<p class="bold">${INSTALL_STEPS[k][0]}</p>${stepList(INSTALL_STEPS[k])}`).join("")}
+    </details>`;
+}
+
+function bindInstall(root) {
+  root.querySelectorAll("[data-install-now]").forEach((btn) =>
+    btn.addEventListener("click", async () => {
+      if (!installPrompt) return;
+      const prompt = installPrompt;
+      installPrompt = null;
+      prompt.prompt();
+      await prompt.userChoice.catch(() => {});
+      refreshInstall();
+    }),
+  );
+  root.querySelectorAll("[data-install-dismiss]").forEach((btn) =>
+    btn.addEventListener("click", () => {
+      store.set("install-dismissed", true);
+      btn.closest("[data-install]")?.remove();
+    }),
+  );
+}
+
+function refreshInstall() {
+  document.querySelectorAll("[data-install-steps]").forEach((el) => {
+    el.innerHTML = installSteps();
+    bindInstall(el);
+  });
+  document.querySelectorAll("[data-install-banner-action]").forEach((el) => {
+    el.innerHTML = bannerAction();
+    bindInstall(el);
+  });
+}
+
+const bannerAction = () =>
+  installPrompt
+    ? `<button type="button" class="btn btn-sm btn-primary" data-install-now>Install</button>`
+    : `<a class="btn btn-sm" href="#/me?install">How to</a>`;
+
+// A small banner on the library for phones and tablets that haven't installed it.
+function installBanner() {
+  if (isInstalled() || store.get("install-dismissed", false) || !matchMedia("(pointer: coarse)").matches) return "";
+  return `
+    <div class="wrap" data-install>
+      <div class="install-banner">
+        <p><strong>Get the app.</strong> Add How Sad? to your home screen for quick access.</p>
+        <span data-install-banner-action>${bannerAction()}</span>
+        <button type="button" class="icon-btn" data-install-dismiss aria-label="Dismiss">✕</button>
+      </div>
+    </div>`;
+}
+
+async function renderMe(params = new URLSearchParams()) {
   await loadLibrary();
   const draw = () => {
     const mood = prefs.mood();
@@ -808,6 +932,12 @@ async function renderMe() {
         <p class="small muted">Everything here stays on this device. No account needed.</p>
       </section>
       <div class="wrap settings">
+        ${isInstalled() ? "" : `
+        <section class="panel install" id="install" data-install>
+          <h2 class="legend-title">Get the app</h2>
+          <p>Install How Sad? on your home screen or desktop so it opens like an app, full screen and without the browser bars. It updates itself.</p>
+          <div data-install-steps>${installSteps()}</div>
+        </section>`}
         <fieldset class="panel">
           <legend>Your mood</legend>
           <p>Used for the go / caution / don't verdicts everywhere in the app.</p>
@@ -857,11 +987,11 @@ async function renderMe() {
           <p>An independent, fan-made front end for <a href="${SITE}" target="_blank" rel="noopener">How Sad Is This Chapter?</a>. It is <strong>not</strong> made, run, affiliated with or endorsed by that site or its creator.</p>
           <p>All credit for the site, its idea and its design belongs to its creator, and every rating comes from readers on the original site. To rate a book or add one, use the main site.</p>
           <p>Spotted a problem with a rating or book? Report it on the original site. Problems with this app have nothing to do with them.</p>
-          <p>To use it like an app, add it to your home screen from your browser's share or menu button.</p>
           <a class="btn btn-primary" href="https://ko-fi.com/catieosaurus" target="_blank" rel="noopener">Tip the original creator</a>
         </section>
       </div>`;
 
+    bindInstall(view);
     bindMoodButtons(view, keepY(draw));
     view.querySelectorAll("[data-avoid]").forEach((box) =>
       box.addEventListener("change", () => {
@@ -928,7 +1058,9 @@ async function renderMe() {
     });
   };
   draw();
-  window.scrollTo(0, 0);
+  const install = params.has("install") && document.getElementById("install");
+  if (install) install.scrollIntoView({ block: "start" });
+  else window.scrollTo(0, 0);
 }
 
 function keepY(fn) {
@@ -968,7 +1100,7 @@ async function route() {
       await renderDiscover();
     } else if (kind === "me") {
       setTab("me");
-      await renderMe();
+      await renderMe(params);
     } else {
       setTab("library");
       await renderLibrary(params);
@@ -981,8 +1113,60 @@ async function route() {
   }
 }
 
+// ---------- staying up to date ----------
+// Each build stamps its version into index.html and version.json. When the
+// server has a newer one, reload: straight away when you come back to the
+// app, or at your next page change if it's noticed while you're using it.
+const APP_VERSION = document.querySelector('meta[name="app-version"]')?.content ?? "";
+let updatePending = false;
+
+async function newerVersionAvailable() {
+  if (!APP_VERSION || APP_VERSION.startsWith("__")) return false; // local dev build
+  try {
+    const res = await fetch("version.json", { cache: "no-store" });
+    if (!res.ok) return false;
+    const { version } = await res.json();
+    // Never reload twice for the same version (e.g. if a stale copy was served).
+    let tried = null;
+    try { tried = sessionStorage.getItem("reloaded-for"); } catch {}
+    return Boolean(version) && version !== APP_VERSION && version !== tried;
+  } catch {
+    return false;
+  }
+}
+
+async function applyUpdate() {
+  try {
+    const { version } = await (await fetch("version.json", { cache: "no-store" })).json();
+    sessionStorage.setItem("reloaded-for", version);
+    sessionStorage.setItem("just-updated", "1");
+  } catch {}
+  const reg = await navigator.serviceWorker?.getRegistration().catch(() => null);
+  await reg?.update().catch(() => {});
+  location.reload();
+}
+
+async function checkForUpdate(now) {
+  if (!(await newerVersionAvailable())) return;
+  if (now) applyUpdate();
+  else updatePending = true;
+}
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") checkForUpdate(true);
+});
+window.addEventListener("pageshow", (e) => e.persisted && checkForUpdate(true));
+setInterval(() => document.visibilityState === "visible" && checkForUpdate(false), 15 * 60 * 1000);
+try {
+  if (sessionStorage.getItem("just-updated")) {
+    sessionStorage.removeItem("just-updated");
+    setTimeout(() => toast("Updated to the latest version"), 600);
+  }
+} catch {}
+
 let lastRoute = location.hash;
 window.addEventListener("hashchange", () => {
+  if (updatePending) return applyUpdate();
   // Leaving the library: remember where you were in the list.
   if (!lastRoute || lastRoute === "#/" || lastRoute.startsWith("#/?")) state.libraryScroll = state.lastLibraryY ?? 0;
   lastRoute = location.hash;

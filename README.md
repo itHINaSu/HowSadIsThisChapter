@@ -31,6 +31,15 @@ and flags for warnings you avoid even while other spoilers stay hidden.
 
 Everything personal is stored only on the device; there are no accounts.
 
+The Me tab explains how to install the app on the device you're using, and
+phones get a small dismissible banner on the Library page; both disappear
+once the app is installed.
+
+**Updates reach installed apps on their own.** Each image build stamps its
+commit into the app. When someone returns to the app and the server has a
+newer build, it reloads itself (or at the next page change, if the update
+lands while they're using it). Nobody needs to close, refresh or reinstall it.
+
 ## Run it
 
 The images are built by GitHub Actions and published to `ghcr.io/ithinasu/`.

@@ -395,3 +395,27 @@ html.text-xl { font-size: 125%; }
   font-weight: 900; box-shadow: 3px 3px 0 var(--foreground); transition: opacity .2s, transform .2s;
 }
 .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- installing the app ---------- */
+.install-banner {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 10px;
+  margin-top: 18px; padding: 10px 10px 10px 14px;
+  border: 2px solid var(--foreground); background: var(--highlight); color: var(--highlight-foreground);
+  box-shadow: 3px 3px 0 var(--foreground);
+}
+.install-banner p { margin: 0; font-size: .85rem; font-weight: 700; }
+.install-banner .btn:not(.btn-primary) { background: var(--background); color: var(--foreground); }
+.install-banner .icon-btn { margin: 0; width: 36px; height: 36px; }
+.steps { margin: 8px 0 4px; padding-left: 1.4em; font-weight: 700; }
+.steps li { margin: 0 0 8px; line-height: 1.6; }
+.steps li::marker { font-weight: 900; color: var(--primary); }
+.glyph {
+  display: inline-block; width: 1.5em; height: 1.5em; margin: 0 2px; padding: 2px; vertical-align: -.45em;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+  border: 2px solid var(--foreground); border-radius: 6px; background: var(--background);
+}
+.glyph circle { fill: currentColor; stroke: none; }
+.install .btn-primary { margin-top: 8px; }
+.other-devices { margin-top: 10px; border-top: 2px solid var(--foreground); padding-top: 8px; }
+.other-devices summary { cursor: pointer; font-weight: 900; font-size: .85rem; text-transform: uppercase; min-height: 32px; display: flex; align-items: center; }
+.other-devices p.bold { margin: 10px 0 0; color: var(--foreground); }

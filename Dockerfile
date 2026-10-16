@@ -5,6 +5,11 @@ FROM nginx:1.27-alpine AS web
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY site/ /usr/share/nginx/html/
 RUN rm -rf /usr/share/nginx/html/api
+# Stamp the build's version so open apps can tell when to reload.
+ARG VERSION=dev
+RUN cd /usr/share/nginx/html \
+ && sed -i "s/__APP_VERSION__/${VERSION}/g" index.html sw.js \
+ && printf '{"version":"%s"}\n' "${VERSION}" > version.json
 
 # Rebuilds the data from howsadisthischapter.com on a schedule.
 FROM node:22-alpine AS updater
