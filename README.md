@@ -11,6 +11,26 @@ ratings and content warnings from [howsadisthischapter.com](https://howsadisthis
 > buttons send you to the original site. If the site's owner would like
 > this changed or taken down, open an issue and it will be.
 
+## What it does
+
+Four tabs along the bottom:
+
+- **Library**: search and sort every book, with filters (hide spicy books, only
+  rated books, hide books with warnings you avoid, group series) and a sadness
+  strip on each card. Books not in the library link to the site's "add a book" page.
+- **Reading**: your shelf. Books you're reading, with your chapter, the next three
+  chapters' verdicts and the saddest part still ahead; plus finished and bailed lists.
+- **Discover**: safe for your mood, gentle reads, no warnings you avoid,
+  saddest chapters, most rated.
+- **Me**: mood, warnings to avoid, spoiler default, text size, theme,
+  export/import of your data, and the About page.
+
+Book pages have the site's mood verdicts (same thresholds and wording), a
+tappable sadness timeline, reading status, share links for books and chapters,
+and flags for warnings you avoid even while other spoilers stay hidden.
+
+Everything personal is stored only on the device; there are no accounts.
+
 ## Run it
 
 You only need [`docker-compose.yml`](docker-compose.yml). The images are

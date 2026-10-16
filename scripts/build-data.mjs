@@ -88,7 +88,10 @@ function summarize(book, addedAt) {
     ratedChapters: rated.length,
     votes: book.chapters.reduce((n, c) => n + c.votes, 0),
     peak: rated.length ? Math.max(...rated.map((c) => c.average)) : null,
-    warnings: book.chapters.some((c) => c.warnings.length > 0),
+    isSpicy: !!book.isSpicy,
+    // Per-chapter averages (null = not enough ratings) for the sadness strip.
+    levels: book.chapters.map((c) => c.average),
+    warningIds: [...new Set(book.chapters.flatMap((c) => c.warnings.map((w) => w.id)))],
   };
 }
 

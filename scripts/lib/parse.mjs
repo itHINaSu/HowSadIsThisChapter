@@ -126,6 +126,8 @@ export function normalizeBook(l) {
     isbn: b.isbn13 ?? b.isbn ?? null,
     isSpicy: !!b.isSpicy,
     series: b.seriesSlug ? { slug: b.seriesSlug, title: b.seriesTitle, number: b.seriesNumber ?? null } : null,
+    // "Bailed" stats as the site sends them; shape unknown until a book has some.
+    dnf: l.dnfStats ?? null,
     chapters,
     warningTypes,
     thresholds,

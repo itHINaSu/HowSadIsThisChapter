@@ -31,6 +31,8 @@ test("normalizes chapters in display order and hides averages below the vote min
   assert.equal(book.chapters[3].average, null); // 1 vote < sadnessMinVotes (5)
   assert.equal(book.series.slug, "they-both-die-at-the-end");
   assert.equal(book.warningTypes.length, 11);
+  assert.equal(book.dnf, null);
+  assert.equal(book.isSpicy, false);
 });
 
 test("shows averages once the vote minimum is met", () => {
