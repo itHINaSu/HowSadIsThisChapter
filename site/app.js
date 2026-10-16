@@ -232,7 +232,7 @@ function timeline(values, mood, chapters = null) {
     const label = avg === null ? `${name}: not enough ratings` : `${name}: ${fmt(avg)}${v ? `, ${VERDICTS[v]}` : ""}`;
     return `<button type="button" class="${cls}" data-jump="${i}" aria-label="${label}" title="${label}"></button>`;
   }).join("");
-  return `<div class="timeline${chapters ? " interactive" : ""}"${chapters ? "" : ' aria-hidden="true"'}>${segs}</div>`;
+  return `<div class="timeline${chapters ? " interactive" : ""}${values.length > 60 ? " dense" : ""}"${chapters ? "" : ' aria-hidden="true"'}>${segs}</div>`;
 }
 
 // ---------- library ----------

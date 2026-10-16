@@ -337,10 +337,14 @@ html.text-xl { font-size: 125%; }
 .flag-avoid { background: var(--mood-stop); color: var(--mood-stop-foreground); }
 
 /* ---------- sadness timeline ---------- */
-.timeline { display: flex; gap: 1px; height: 10px; }
-.timeline > * { flex: 1 1 0; min-width: 1px; border: 0; padding: 0; background: var(--muted); }
-.timeline.interactive { height: 30px; gap: 2px; margin-top: 10px; }
-.timeline.interactive > * { cursor: pointer; border: 1.5px solid var(--foreground); }
+.timeline { display: flex; gap: 1px; height: 10px; min-width: 0; max-width: 100%; overflow: hidden; }
+.timeline > * { flex: 1 1 0; min-width: 0; border: 0; padding: 0; background: var(--muted); }
+/* One outer border with thin dividers (dark gaps), so any number of chapters
+   fits; very long books drop the dividers. */
+.timeline.interactive { height: 30px; margin-top: 10px; border: 2px solid var(--foreground); background: var(--foreground); }
+.timeline.interactive.dense { gap: 0; }
+.timeline.interactive > * { cursor: pointer; appearance: none; -webkit-appearance: none; border-radius: 0; }
+.timeline.interactive > *:hover, .timeline.interactive > *:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; position: relative; z-index: 1; }
 .timeline .t-none, .next .t-none { background: var(--muted); }
 .timeline .v-go, .next .v-go { background: var(--mood-go); color: var(--mood-go-foreground); }
 .timeline .v-caution, .next .v-caution { background: var(--mood-caution); color: var(--mood-caution-foreground); }
