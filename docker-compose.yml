@@ -7,7 +7,7 @@ services:
     ports:
       - "${PORT:-8080}:80"
     volumes:
-      - data:/data:ro
+      - ${DATA_DIR:-data}:/data:ro
     restart: unless-stopped
 
   updater:
@@ -18,7 +18,10 @@ services:
       # Pause between book page requests, to stay gentle on the site.
       DELAY_MS: "${DELAY_MS:-600}"
     volumes:
-      - data:/data
+      # A Docker-managed volume by default. Set DATA_DIR=./data in .env to
+      # keep the files in a folder next to this file instead (run
+      # `mkdir -p data && sudo chown 1000:1000 data` first).
+      - ${DATA_DIR:-data}:/data
     restart: unless-stopped
 
 volumes:

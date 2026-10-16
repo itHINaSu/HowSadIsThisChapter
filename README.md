@@ -68,6 +68,7 @@ Settings (put them in a `.env` file next to `docker-compose.yml`):
 | `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
 | `DELAY_MS` | `600` | Pause between book page requests |
 | `TAG` | `latest` | Image tag to run (`latest`, a branch name, or `sha-<commit>`) |
+| `DATA_DIR` | `data` (Docker volume) | Where the ratings data is kept. Use `./data` for a folder next to the compose file (create it and `chown 1000:1000` it first) |
 
 Watch an update with `docker compose logs -f updater`.
 
