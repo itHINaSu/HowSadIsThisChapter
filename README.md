@@ -13,7 +13,7 @@ ratings and content warnings from [howsadisthischapter.com](https://howsadisthis
 
 ## What it does
 
-Four tabs along the bottom:
+Four tabs (along the bottom on phones and tablets, in the header on desktop):
 
 - **Library**: search and sort every book, with filters (hide spicy books, only
   rated books, hide books with warnings you avoid, group series) and a sadness
