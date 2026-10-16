@@ -50,6 +50,13 @@
 
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
+/* Nothing should ever scroll sideways. */
+html, body { overflow-x: hidden; overflow-x: clip; overscroll-behavior-x: none; }
+/* The installed app behaves like an app: no pinch zoom or sideways panning
+   (the Me tab has text sizes instead). In the browser, zooming stays on. */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  html { touch-action: pan-y; }
+}
 body {
   margin: 0; min-height: 100vh; display: flex; flex-direction: column;
   background: var(--background); color: var(--foreground);
@@ -124,8 +131,10 @@ img { display: block; }
 .section-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 12px; padding-bottom: 14px; margin-bottom: 18px; border-bottom: 2px solid var(--foreground); }
 .eyebrow { margin: 0; font-size: .72rem; font-weight: 900; text-transform: uppercase; color: var(--primary); }
 .section-head h2 { margin: 4px 0 0; font-family: var(--display); font-weight: 400; font-size: 1.9rem; line-height: 1.1; }
-.sort { display: flex; gap: 8px; overflow-x: auto; margin: 0 0 18px; padding: 2px 2px 6px; }
-.sort .btn { flex: none; }
+/* Four equal buttons that always fit the width; labels wrap rather than scroll. */
+.sort { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin: 0 0 18px; padding: 2px 3px 4px 0; }
+.sort .btn { min-width: 0; padding: 4px 4px; font-size: .74rem; line-height: 1.15; white-space: normal; text-align: center; }
+@media (min-width: 560px) { .sort { display: flex; gap: 8px; } .sort .btn { flex: none; padding: 4px 12px; font-size: .78rem; } }
 
 /* Book cards: compact, horizontal version of the site's cards */
 .cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }

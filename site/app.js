@@ -334,7 +334,7 @@ async function renderLibrary(params) {
   if (params.get("sort")) state.sort = params.get("sort");
   state.preset = PRESETS[params.get("preset")] ? params.get("preset") : null;
   const preset = PRESETS[state.preset];
-  const sorts = [["recent", "Recently added"], ["az", "A–Z"], ["saddest", "Saddest"], ["rated", "Most rated"]];
+  const sorts = [["recent", "Newest"], ["az", "A–Z"], ["saddest", "Saddest"], ["rated", "Most rated"]];
   const f = prefs.filters();
   const toggles = [
     ["hideSpicy", "Hide spicy books"],
@@ -1163,6 +1163,12 @@ try {
     setTimeout(() => toast("Updated to the latest version"), 600);
   }
 } catch {}
+
+// iOS ignores touch-action for pinch zoom in some versions; block its
+// gesture events too, but only in the installed app.
+if (isInstalled()) {
+  for (const type of ["gesturestart", "gesturechange"]) document.addEventListener(type, (e) => e.preventDefault(), { passive: false });
+}
 
 let lastRoute = location.hash;
 window.addEventListener("hashchange", () => {
