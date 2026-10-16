@@ -11,6 +11,11 @@ ratings and content warnings from [howsadisthischapter.com](https://howsadisthis
 > buttons send you to the original site. If the site's owner would like
 > this changed or taken down, open an issue and it will be.
 
+**For the site's creator:** this app uses the same tools as
+howsadisthischapter.com (React, TypeScript, TanStack Router and Query,
+Tailwind with shadcn/ui colours). [INTEGRATION.md](INTEGRATION.md) explains
+how to bring any of its features into the real site, with prompts for Lovable.
+
 ## What it does
 
 Four tabs (along the bottom on phones; in the header on tablets and computers, or a menu in a narrow desktop window):
@@ -26,8 +31,7 @@ Four tabs (along the bottom on phones; in the header on tablets and computers, o
   export/import of your data, and the About page.
 
 Book pages have the site's mood verdicts (same thresholds and wording), a
-tappable sadness timeline, reading status, share links for books and chapters,
-and flags for warnings you avoid even while other spoilers stay hidden.
+tappable sadness timeline, reading status, a share button, and flags for warnings you avoid even while other spoilers stay hidden.
 
 Everything personal is stored only on the device; there are no accounts.
 
@@ -55,13 +59,15 @@ mkdir -p howsad/data && cd howsad
 **2. Save this as `docker-compose.yml`** and edit the values in place:
 
 ```yaml
-# Copy this into your own folder and edit the values in place.
-# Create the data folder first (mkdir -p data), owned by the user below.
 services:
   web:
     image: ghcr.io/ithinasu/howsadisthischapter-web:latest
     ports:
       - "8080:80"            # change 8080 to the port you want
+    environment:
+      # The address people use to reach the app, used for shared links.
+      # Leave empty and shared links go to the book on howsadisthischapter.com.
+      PUBLIC_URL: ""                # e.g. "https://howsad.example.com"
     volumes:
       - ./data:/data:ro
     restart: unless-stopped
@@ -80,6 +86,7 @@ services:
 | Setting | Default | What it does |
 |---|---|---|
 | `ports` | `8080:80` | Change the first number to serve on another port |
+| `PUBLIC_URL` | empty | Your app's public address (e.g. `https://howsad.example.com`). Share buttons link there. Empty: they link to the book on the original site, so your server's address is never shared |
 | `user` | `1000:1000` | User and group the updater writes `./data` as. Use the owner of the `data` folder (`id -u`, `id -g`) |
 | `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
 | `DELAY_MS` | `600` | Pause between book page requests |
@@ -132,9 +139,13 @@ just without install/offline. Easy ways to get HTTPS:
 
 ```
 docker compose
-├── updater  (node)   every 24h: build JSON into the shared volume
-└── web      (nginx)  serves site/ and the JSON at /api/
+├── updater  (node)   every 24h: build JSON into ./data
+└── web      (nginx)  serves the app and the JSON at /api/
 ```
+
+The app is React + TypeScript, built with Vite, using TanStack Router and
+TanStack Query, styled with Tailwind CSS. See [INTEGRATION.md](INTEGRATION.md)
+for a map of the code.
 
 `scripts/build-data.mjs` gets the list of approved books from the site's
 public Supabase tables, then reads each `/book/<slug>` page's embedded
@@ -154,10 +165,13 @@ books fail, the old data stays in place untouched.
 ## Development
 
 ```sh
-npm test               # parser tests against a saved book page
-npm run build-data     # build data into site/api (needs internet)
-npm run serve          # serve site/ on http://localhost:8080
+npm ci                 # install
+npm run build-data     # fetch real data into public/api (needs internet, ~15 min)
+npm run dev            # app on http://localhost:8080 with live reload
+npm run typecheck      # TypeScript
+npm test               # unit tests (logic) and parser tests (saved book page)
+npm run test:e2e       # Playwright tests on a sample library
+npm run build          # production build into dist/
 ```
 
-To match the site's exact colours, change the tokens at the top of
-`site/styles.css`.
+Colours are the tokens at the top of `src/index.css`.

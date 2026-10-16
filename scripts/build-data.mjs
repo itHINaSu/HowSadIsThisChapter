@@ -1,4 +1,4 @@
-// Builds the static JSON API the PWA reads, under site/api/.
+// Builds the static JSON API the app reads, under public/api/ (or $OUT_DIR/api).
 //
 //   books.json          every approved book with a short summary
 //   books/<slug>.json   one book: chapters, sadness averages, warnings
@@ -10,7 +10,7 @@
 // averages are only computed server-side, so those come from the data
 // block embedded in each /book/<slug> page.
 //
-// Env: OUT_DIR (parent of api/, default site/), MAX_BOOKS (limit, for
+// Env: OUT_DIR (parent of api/, default public/), MAX_BOOKS (limit, for
 //      testing), DELAY_MS (pause between page fetches).
 //
 // Each run writes to api.tmp/ and swaps it in at the end, so the web
@@ -25,7 +25,7 @@ const SUPABASE = "https://iaskgacieqgmmfayckfm.supabase.co/rest/v1";
 const KEY = "sb_publishable_Ur2jbI7Sk8NHppFCHPmu4Q_lxvCcn93"; // public key shipped in the site's own JS
 const UA = "HowSadIsThisChapter-PWA/1.0 (+https://github.com/itHINaSu/HowSadIsThisChapter)";
 
-const ROOT = process.env.OUT_DIR ?? new URL("../site/", import.meta.url).pathname;
+const ROOT = process.env.OUT_DIR ?? new URL("../public/", import.meta.url).pathname;
 const OUT = join(ROOT, "api");
 const TMP = join(ROOT, "api.tmp");
 const MAX_BOOKS = Number(process.env.MAX_BOOKS) || Infinity;

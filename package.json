@@ -2,11 +2,35 @@
   "name": "how-sad-is-this-chapter-pwa",
   "private": true,
   "type": "module",
-  "description": "Mobile-friendly PWA for howsadisthischapter.com ratings",
+  "description": "Unofficial mobile-friendly PWA for howsadisthischapter.com ratings",
   "engines": { "node": ">=20" },
   "scripts": {
-    "test": "node --test scripts/parse.test.mjs",
-    "build-data": "node scripts/build-data.mjs",
-    "serve": "python3 -m http.server 8080 --directory site"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 8080",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run && node --test scripts/parse.test.mjs",
+    "test:e2e": "node tests/e2e/make-sample.mjs && playwright test",
+    "build-data": "node scripts/build-data.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.103.2",
+    "@tanstack/react-router": "1.170.39",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "tailwind-merge": "3.7.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "@tailwindcss/vite": "4.3.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "vite": "8.3.1",
+    "vitest": "5.0.1"
   }
 }

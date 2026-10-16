@@ -9,14 +9,20 @@ const VERSION = "__APP_VERSION__";
 const SHELL = `shell-${VERSION}`;
 const DATA = "data-v1";
 const IMAGES = "images-v1";
-const SHELL_FILES = ["./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png"];
+const SHELL_FILES = ["./", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png"];
+
+// Precache the page plus the hashed JS/CSS it references, so the app opens
+// offline from the first install.
+async function precache() {
+  const cache = await caches.open(SHELL);
+  await cache.addAll(SHELL_FILES.map((f) => new Request(f, { cache: "reload" })));
+  const html = await (await cache.match("./")).text();
+  const assets = [...html.matchAll(/(?:src|href)="\.?\/?(assets\/[^"]+)"/g)].map((m) => m[1]);
+  await cache.addAll(assets);
+}
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(SHELL)
-      .then((c) => c.addAll(SHELL_FILES.map((f) => new Request(f, { cache: "reload" }))))
-      .then(() => self.skipWaiting()),
-  );
+  event.waitUntil(precache().then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (event) => {

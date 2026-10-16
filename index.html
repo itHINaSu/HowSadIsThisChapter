@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, viewport-fit=cover">
+  <title>How Sad? · Unofficial mobile reader</title>
+  <meta name="description" content="An unofficial, fan-made mobile reader for howsadisthischapter.com. Not affiliated with or endorsed by the site; all ratings belong to its creator and community.">
+  <meta name="theme-color" content="#ff67bd">
+  <!-- Stamped with the build's commit by the Dockerfile; used to spot new versions -->
+  <meta name="app-version" content="__APP_VERSION__">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="How Sad?">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:wght@400;600;700;900&display=swap">
+  <!-- Theme (same storage key as the main site) and text size, applied before paint -->
+  <script>(function(){try{var r=document.documentElement,t=localStorage.getItem('sadness-theme');var d=t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;r.classList.toggle('dark',d);r.style.colorScheme=d?'dark':'light';var s=JSON.parse(localStorage.getItem('text-size')||'null');if(s)r.classList.add('text-'+s)}catch(e){}})()</script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+</html>

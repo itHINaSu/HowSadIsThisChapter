@@ -1,5 +1,9 @@
 node_modules/
-site/api/
-site/api.tmp/
-site/api.old/
+dist/
+public/api/
+public/api.tmp/
+public/api.old/
+test-results/
+playwright-report/
 .env
+tests/e2e/.data/

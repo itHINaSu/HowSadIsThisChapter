@@ -5,6 +5,10 @@ services:
     image: ghcr.io/ithinasu/howsadisthischapter-web:latest
     ports:
       - "8080:80"            # change 8080 to the port you want
+    environment:
+      # The address people use to reach the app, used for shared links.
+      # Leave empty and shared links go to the book on howsadisthischapter.com.
+      PUBLIC_URL: ""                # e.g. "https://howsad.example.com"
     volumes:
       - ./data:/data:ro
     restart: unless-stopped

@@ -1,7 +1,11 @@
 .git
 node_modules
-site/api
-site/api.tmp
-site/api.old
+dist
+public/api
+public/api.tmp
+public/api.old
 scripts/fixtures
+tests
+test-results
+playwright-report
 *.md
