@@ -12,7 +12,7 @@ WORKDIR /app
 COPY package.json ./
 COPY scripts/ ./scripts/
 ENV OUT_DIR=/data NODE_ENV=production
-# Runs unprivileged; docker-compose.yml overrides the user with PUID:PGID
+# Runs unprivileged; docker-compose.yml sets the user
 # so the files in ./data belong to whoever owns that folder.
 RUN mkdir -p /data && chown node:node /data
 USER node

@@ -43,49 +43,40 @@ there, so your ports and ids are never overwritten by an update.
 mkdir -p howsad/data && cd howsad
 ```
 
-**2. Save this as `docker-compose.yml`:**
+**2. Save this as `docker-compose.yml`** and edit the values in place:
 
 ```yaml
+# Copy this into your own folder and edit the values in place.
+# Create the data folder first (mkdir -p data), owned by the user below.
 services:
   web:
-    image: ghcr.io/ithinasu/howsadisthischapter-web:${TAG:-latest}
+    image: ghcr.io/ithinasu/howsadisthischapter-web:latest
     ports:
-      - "${PORT:-8080}:80"
+      - "8080:80"            # change 8080 to the port you want
     volumes:
       - ./data:/data:ro
     restart: unless-stopped
 
   updater:
-    image: ghcr.io/ithinasu/howsadisthischapter-updater:${TAG:-latest}
-    user: "${PUID:-1000}:${PGID:-1000}"
+    image: ghcr.io/ithinasu/howsadisthischapter-updater:latest
+    user: "1000:1000"        # owner of ./data: run `id -u` and `id -g`
     environment:
-      UPDATE_INTERVAL_HOURS: "${UPDATE_INTERVAL_HOURS:-24}"
-      DELAY_MS: "${DELAY_MS:-600}"
+      UPDATE_INTERVAL_HOURS: "24"   # how often to refresh the ratings
+      DELAY_MS: "600"               # pause between book page requests
     volumes:
       - ./data:/data
     restart: unless-stopped
 ```
 
-**3. Save this as `.env`** and adjust it (`id -u` and `id -g` print your ids):
-
-```sh
-PUID=1000
-PGID=1000
-PORT=8080
-TAG=latest
-UPDATE_INTERVAL_HOURS=24
-DELAY_MS=600
-```
-
-| Variable | Default | What it does |
+| Setting | Default | What it does |
 |---|---|---|
-| `PUID` / `PGID` | `1000` | User and group the updater writes `./data` as. Use the owner of the `data` folder |
-| `PORT` | `8080` | Port the app is served on |
-| `TAG` | `latest` | Image tag to run (`latest`, a branch name, or `sha-<commit>`) |
+| `ports` | `8080:80` | Change the first number to serve on another port |
+| `user` | `1000:1000` | User and group the updater writes `./data` as. Use the owner of the `data` folder (`id -u`, `id -g`) |
 | `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
 | `DELAY_MS` | `600` | Pause between book page requests |
+| image tag | `latest` | Swap `:latest` for `:sha-<commit>` on both images to pin a build |
 
-**4. Start it:**
+**3. Start it:**
 
 ```sh
 docker compose up -d
@@ -106,14 +97,13 @@ personal is stored on the server.
 docker compose pull && docker compose up -d
 ```
 
-This only fetches new images; your `docker-compose.yml` and `.env` are
-left alone. To pin a specific build, set `TAG=sha-<commit>` in `.env`.
+This only fetches new images; your `docker-compose.yml` is left alone.
 
 If the updater logs a permission error, the `data` folder isn't owned by
-`PUID:PGID`; fix it with `sudo chown -R <PUID>:<PGID> data`.
+the compose file's `user`; fix it with `sudo chown -R <uid>:<gid> data`.
 
 To build from a checkout of this repo instead of pulling (it has the same
-`docker-compose.yml` and an `.env.example`):
+`docker-compose.yml`):
 `docker compose -f docker-compose.yml -f compose.build.yml up -d --build`.
 
 Watch an update with `docker compose logs -f updater`.
