@@ -1003,6 +1003,21 @@ document.querySelectorAll(".tabbar [data-tab]").forEach((a) =>
   }),
 );
 
+// Hamburger menu (computers with a narrow window).
+const header = document.querySelector(".nav");
+const menuBtn = document.querySelector(".menu-btn");
+function setMenu(open) {
+  header.classList.toggle("menu-open", open);
+  menuBtn.setAttribute("aria-expanded", String(open));
+}
+menuBtn.addEventListener("click", () => setMenu(!header.classList.contains("menu-open")));
+document.querySelectorAll(".tabbar a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+document.addEventListener("click", (e) => { if (!header.contains(e.target)) setMenu(false); });
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && header.classList.contains("menu-open")) { setMenu(false); menuBtn.focus(); }
+});
+window.addEventListener("hashchange", () => setMenu(false));
+
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
 }

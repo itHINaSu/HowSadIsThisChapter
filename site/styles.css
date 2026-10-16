@@ -263,11 +263,14 @@ html.text-xl { font-size: 125%; }
 .tabbar a[aria-current="page"] { color: var(--foreground); }
 .tabbar a[aria-current="page"] svg { background: var(--primary); color: var(--primary-foreground); border: 2px solid var(--foreground); border-radius: 999px; padding: 2px 12px; width: 52px; height: 30px; box-shadow: 2px 2px 0 var(--foreground); }
 
-/* Desktop (wide screen with a mouse): the tabs move into a sticky header. */
-@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+/* Computers (mouse or trackpad) never get the bottom bar: the tabs sit in a
+   sticky header when there's room, and in a hamburger menu when there isn't.
+   Touch devices keep the bottom bar. */
+.menu-btn { display: none; }
+@media (hover: hover) and (pointer: fine) {
   .nav { position: sticky; top: 0; z-index: 50; background: var(--background); padding-top: 10px; padding-bottom: 10px; }
   .tabbar { position: static; display: flex; gap: 6px; padding: 0; border: 0; background: none; }
-  .tabbar a { flex-direction: row; gap: 8px; min-height: 40px; padding: 6px 14px; font-size: .8rem; border: 2px solid transparent; border-radius: 999px; }
+  .tabbar a { flex-direction: row; justify-content: flex-start; gap: 8px; min-height: 40px; padding: 6px 14px; font-size: .8rem; border: 2px solid transparent; border-radius: 999px; }
   .tabbar a:hover { color: var(--foreground); border-color: var(--foreground); }
   .tabbar svg { width: 18px; height: 18px; }
   .tabbar a[aria-current="page"] { background: var(--primary); color: var(--primary-foreground); border-color: var(--foreground); box-shadow: 2px 2px 0 var(--foreground); }
@@ -276,6 +279,23 @@ html.text-xl { font-size: 125%; }
   .footer { padding-bottom: 28px; }
   .toast { bottom: 24px; }
   [id^="ch-"] { scroll-margin-top: 84px; }
+}
+@media (max-width: 767.98px) and (hover: hover) and (pointer: fine) {
+  .nav-inner { position: relative; }
+  .menu-btn {
+    display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 40px;
+    border: 2px solid var(--foreground); background: var(--background); cursor: pointer; box-shadow: 2px 2px 0 var(--foreground);
+  }
+  .menu-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; }
+  .menu-btn .icon-close, .nav.menu-open .menu-btn .icon-open { display: none; }
+  .nav.menu-open .menu-btn .icon-close { display: block; }
+  .tabbar {
+    display: none; position: absolute; top: calc(100% + 12px); right: 0; bottom: auto; left: auto; z-index: 51; min-width: 200px;
+    flex-direction: column; gap: 4px; padding: 8px;
+    background: var(--background); border: 2px solid var(--foreground); box-shadow: 4px 4px 0 var(--foreground);
+  }
+  .nav.menu-open .tabbar { display: flex; }
+  .tabbar a { font-size: .85rem; }
 }
 
 /* ---------- page heads for the tab pages ---------- */
