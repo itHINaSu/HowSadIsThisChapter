@@ -11,6 +11,10 @@ for (;;) {
     await buildData();
   } catch (err) {
     console.error(`Update failed: ${err.message}`);
+    if (err.code === "EACCES" || err.code === "EPERM") {
+      const id = `${process.getuid()}:${process.getgid()}`;
+      console.error(`Can't write to the data folder as ${id}. On the host, run: sudo chown -R ${id} data`);
+    }
     wait = Math.min(1, HOURS);
   }
   console.log(`Next update in ${wait}h`);

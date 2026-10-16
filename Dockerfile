@@ -12,8 +12,8 @@ WORKDIR /app
 COPY package.json ./
 COPY scripts/ ./scripts/
 ENV OUT_DIR=/data NODE_ENV=production
-# A fresh named volume copies this directory's ownership, so the
-# unprivileged node user can write to it.
+# Runs unprivileged; docker-compose.yml overrides the user with PUID:PGID
+# so the files in ./data belong to whoever owns that folder.
 RUN mkdir -p /data && chown node:node /data
 USER node
 CMD ["node", "scripts/updater.mjs"]

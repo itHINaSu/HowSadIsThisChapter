@@ -1,28 +1,24 @@
-# Uses the images GitHub Actions publishes on every push. To update:
-#   docker compose pull && docker compose up -d
-# To build from a local checkout instead, see compose.build.yml.
+# Same as the compose file in README.md. Settings go in .env:
+#   PUID / PGID  user and group the updater writes ./data as
+#   PORT         port the app is served on
+#   TAG          image tag (latest, a branch name, or sha-<commit>)
+#   UPDATE_INTERVAL_HOURS, DELAY_MS
+# Create the data folder first: mkdir -p data
 services:
   web:
     image: ghcr.io/ithinasu/howsadisthischapter-web:${TAG:-latest}
     ports:
       - "${PORT:-8080}:80"
     volumes:
-      - ${DATA_DIR:-data}:/data:ro
+      - ./data:/data:ro
     restart: unless-stopped
 
   updater:
     image: ghcr.io/ithinasu/howsadisthischapter-updater:${TAG:-latest}
+    user: "${PUID:-1000}:${PGID:-1000}"
     environment:
-      # Hours between refreshes of the ratings data.
       UPDATE_INTERVAL_HOURS: "${UPDATE_INTERVAL_HOURS:-24}"
-      # Pause between book page requests, to stay gentle on the site.
       DELAY_MS: "${DELAY_MS:-600}"
     volumes:
-      # A Docker-managed volume by default. Set DATA_DIR=./data in .env to
-      # keep the files in a folder next to this file instead (run
-      # `mkdir -p data && sudo chown 1000:1000 data` first).
-      - ${DATA_DIR:-data}:/data
+      - ./data:/data
     restart: unless-stopped
-
-volumes:
-  data:

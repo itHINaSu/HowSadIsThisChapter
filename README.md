@@ -33,16 +33,72 @@ Everything personal is stored only on the device; there are no accounts.
 
 ## Run it
 
-You only need [`docker-compose.yml`](docker-compose.yml). The images are
-built by GitHub Actions and published to `ghcr.io/ithinasu/`.
+The images are built by GitHub Actions and published to `ghcr.io/ithinasu/`.
+The compose file below is meant to be copied into your own folder and kept
+there, so your ports and ids are never overwritten by an update.
+
+**1. Make a folder, with a `data` folder inside it** (owned by you):
 
 ```sh
-mkdir howsad && cd howsad
-curl -fsSLO https://raw.githubusercontent.com/itHINaSu/HowSadIsThisChapter/HEAD/docker-compose.yml
+mkdir -p howsad/data && cd howsad
+```
+
+**2. Save this as `docker-compose.yml`:**
+
+```yaml
+services:
+  web:
+    image: ghcr.io/ithinasu/howsadisthischapter-web:${TAG:-latest}
+    ports:
+      - "${PORT:-8080}:80"
+    volumes:
+      - ./data:/data:ro
+    restart: unless-stopped
+
+  updater:
+    image: ghcr.io/ithinasu/howsadisthischapter-updater:${TAG:-latest}
+    user: "${PUID:-1000}:${PGID:-1000}"
+    environment:
+      UPDATE_INTERVAL_HOURS: "${UPDATE_INTERVAL_HOURS:-24}"
+      DELAY_MS: "${DELAY_MS:-600}"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+```
+
+**3. Save this as `.env`** and adjust it (`id -u` and `id -g` print your ids):
+
+```sh
+PUID=1000
+PGID=1000
+PORT=8080
+TAG=latest
+UPDATE_INTERVAL_HOURS=24
+DELAY_MS=600
+```
+
+| Variable | Default | What it does |
+|---|---|---|
+| `PUID` / `PGID` | `1000` | User and group the updater writes `./data` as. Use the owner of the `data` folder |
+| `PORT` | `8080` | Port the app is served on |
+| `TAG` | `latest` | Image tag to run (`latest`, a branch name, or `sha-<commit>`) |
+| `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
+| `DELAY_MS` | `600` | Pause between book page requests |
+
+**4. Start it:**
+
+```sh
 docker compose up -d
 ```
 
 Then open `http://<your-server>:8080` on your phone.
+
+The first data build takes about 10–15 minutes (it fetches every book page
+politely, one at a time). Until it finishes, the app says the library is
+still being built. After that it refreshes every 24 hours. The data is
+written to `./data/api/` and is only a cache of the site's public ratings;
+it can be deleted at any time and the updater will rebuild it. Nothing
+personal is stored on the server.
 
 **Updating the app:** every push to the repo publishes new images, so
 
@@ -50,25 +106,15 @@ Then open `http://<your-server>:8080` on your phone.
 docker compose pull && docker compose up -d
 ```
 
-Your ratings data lives in the `data` volume and survives updates. To pin a
-specific build instead of `latest`, set `TAG=sha-<commit>` in `.env`.
+This only fetches new images; your `docker-compose.yml` and `.env` are
+left alone. To pin a specific build, set `TAG=sha-<commit>` in `.env`.
 
-To build from a checkout instead of pulling:
+If the updater logs a permission error, the `data` folder isn't owned by
+`PUID:PGID`; fix it with `sudo chown -R <PUID>:<PGID> data`.
+
+To build from a checkout of this repo instead of pulling (it has the same
+`docker-compose.yml` and an `.env.example`):
 `docker compose -f docker-compose.yml -f compose.build.yml up -d --build`.
-
-The first data build takes about 10–15 minutes (it fetches every book page
-politely, one at a time). Until it finishes, the app says the library is
-still being built. After that it refreshes every 24 hours.
-
-Settings (put them in a `.env` file next to `docker-compose.yml`):
-
-| Variable | Default | What it does |
-|---|---|---|
-| `PORT` | `8080` | Port the app is served on |
-| `UPDATE_INTERVAL_HOURS` | `24` | How often the ratings are refreshed |
-| `DELAY_MS` | `600` | Pause between book page requests |
-| `TAG` | `latest` | Image tag to run (`latest`, a branch name, or `sha-<commit>`) |
-| `DATA_DIR` | `data` (Docker volume) | Where the ratings data is kept. Use `./data` for a folder next to the compose file (create it and `chown 1000:1000` it first) |
 
 Watch an update with `docker compose logs -f updater`.
 
