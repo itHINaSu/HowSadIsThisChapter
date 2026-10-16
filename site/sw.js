@@ -1,7 +1,7 @@
 // Offline support: the app shell is precached; the data in api/ is served
 // from cache immediately and refreshed in the background; cover images
 // are cached as they're seen.
-const SHELL = "shell-v3";
+const SHELL = "shell-v4";
 const DATA = "data-v1";
 const IMAGES = "images-v1";
 const SHELL_FILES = ["./", "index.html", "styles.css", "app.js", "manifest.webmanifest", "icons/icon.svg", "icons/icon-192.png"];

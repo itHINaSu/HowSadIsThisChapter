@@ -15,6 +15,14 @@
   --highlight: oklch(85% .18 101);
   --highlight-foreground: oklch(16% .012 350);
 
+  /* mood verdicts, as on the main site */
+  --mood-go: #6cc47f;
+  --mood-go-foreground: #0a0608;
+  --mood-caution: #e5cd2c;
+  --mood-caution-foreground: #0a0608;
+  --mood-stop: #d4283f;
+  --mood-stop-foreground: #ffffff;
+
   /* sadness scale, 1 (barely) to 5 (devastating) */
   --s1: #8fd694;
   --s2: #cde36b;
@@ -175,6 +183,23 @@ fieldset.panel { min-width: 0; }
 @media (min-width: 560px) { .two { grid-template-columns: 1fr 1fr; } }
 .two .btn { min-height: 48px; }
 
+.moods { display: grid; gap: 8px; margin-top: 12px; }
+@media (min-width: 560px) { .moods { grid-template-columns: 1fr 1fr; } }
+.btn.mood { min-height: 56px; justify-content: flex-start; text-align: left; white-space: normal; line-height: 1.2; }
+.mood-fine { background: var(--mood-go); color: var(--mood-go-foreground); }
+.mood-fragile { background: var(--mood-caution); color: var(--mood-caution-foreground); }
+.mood-devastated { background: var(--mood-stop); color: var(--mood-stop-foreground); }
+.mood-enraged { background: var(--foreground); color: var(--background); }
+.btn.mood[aria-pressed="true"] { box-shadow: 4px 4px 0 var(--foreground); outline: 3px solid var(--foreground); outline-offset: 2px; }
+.btn.mood.mood-fine[aria-pressed="true"] { background: var(--mood-go); color: var(--mood-go-foreground); }
+.btn.mood.mood-fragile[aria-pressed="true"] { background: var(--mood-caution); color: var(--mood-caution-foreground); }
+.btn.mood.mood-devastated[aria-pressed="true"] { background: var(--mood-stop); color: var(--mood-stop-foreground); }
+.btn.mood.mood-enraged[aria-pressed="true"] { background: var(--foreground); color: var(--background); }
+.verdict { display: inline-block; margin: 14px 0 0; padding: 8px 12px; border: 2px solid var(--foreground); font-size: .85rem; font-weight: 900; text-transform: uppercase; }
+.verdict.v-go { background: var(--mood-go); color: var(--mood-go-foreground); }
+.verdict.v-caution { background: var(--mood-caution); color: var(--mood-caution-foreground); }
+.verdict.v-stop { background: var(--mood-stop); color: var(--mood-stop-foreground); }
+.verdict-hint { margin: 14px 0 0; font-size: .85rem; font-weight: 700; color: var(--muted-foreground); }
 .chapters { display: grid; gap: 22px; }
 .chapter { padding: 16px; border: 2px solid var(--foreground); background: var(--card); box-shadow: 5px 5px 0 var(--foreground); }
 .chapter.here { outline: 4px solid var(--highlight); outline-offset: 3px; }

@@ -192,7 +192,22 @@ async function renderHome() {
 
 // ---------- book ----------
 
-function chapterCard(c, i, here, showWarnings, warningNames, minVotes) {
+// Mood verdicts, using the same thresholds and wording as the main site.
+const MOODS = [
+  { id: "fine", label: "I'm doing fine!", goBelow: 4, cautionBelow: 4.5 },
+  { id: "fragile", label: "I'm a little fragile", goBelow: 2.5, cautionBelow: 4 },
+  { id: "devastated", label: "I am emotionally devastated", goBelow: 1.5, cautionBelow: 2.5 },
+  { id: "enraged", label: "I'm enraged at the state of the world and am reading to cope", goBelow: Infinity, cautionBelow: Infinity },
+];
+const VERDICTS = { go: "Go for it", caution: "Proceed with caution", stop: "Don't do it babe" };
+
+function verdict(moodId, avg) {
+  const mood = MOODS.find((m) => m.id === moodId);
+  if (!mood || avg === null) return null;
+  return avg < mood.goBelow ? "go" : avg < mood.cautionBelow ? "caution" : "stop";
+}
+
+function chapterCard(c, i, here, showWarnings, warningNames, minVotes, mood) {
   const avg = c.average;
   const s = avg !== null ? level(avg) : 0;
   const count = avg !== null
@@ -219,6 +234,14 @@ function chapterCard(c, i, here, showWarnings, warningNames, minVotes) {
       </div>
     </div>
     <div class="meter" aria-hidden="true">${meter}</div>
+    ${mood === null
+      ? `<p class="verdict-hint">Pick your mood above and we'll tell you if you can handle this one.</p>`
+      : (() => {
+          const v = verdict(mood, avg);
+          return v
+            ? `<p class="verdict v-${v}" role="status">${VERDICTS[v]}</p>`
+            : `<p class="verdict-hint">Not enough ratings for a verdict yet.</p>`;
+        })()}
     <div class="cw"><p class="cw-title">Content warnings</p>${cw}</div>
   </article>`;
 }
@@ -244,6 +267,7 @@ async function renderBook(slug) {
   const draw = () => {
     const here = store.get(hereKey, null);
     const showWarnings = store.get("show-warnings", false);
+    const mood = store.get("mood", null);
 
     let ahead = "";
     if (here !== null && book.chapters[here]) {
@@ -279,6 +303,14 @@ async function renderBook(slug) {
       <div class="book-body">
         ${limited ? `<p class="note" role="note">Warning: this book has limited ratings, so these averages may change.</p>` : ""}
         <fieldset class="panel">
+          <legend>First things first</legend>
+          <h2>How are you doing right now?</h2>
+          <p>Choose how you're feeling and we'll tell you if you can handle each chapter.</p>
+          <div class="moods">
+            ${MOODS.map((m) => `<button type="button" class="btn mood mood-${m.id}" data-mood="${m.id}" aria-pressed="${mood === m.id}">${esc(m.label)}</button>`).join("")}
+          </div>
+        </fieldset>
+        <fieldset class="panel">
           <legend>Where are you at?</legend>
           <h2>Which chapter are you on?</h2>
           <p>Pick it and we'll tell you how bad it gets from here.</p>
@@ -297,7 +329,7 @@ async function renderBook(slug) {
         </fieldset>
         <div class="chapters">
           ${book.chapters.length
-            ? book.chapters.map((c, i) => chapterCard(c, i, here, showWarnings, warningNames, minVotes)).join("")
+            ? book.chapters.map((c, i) => chapterCard(c, i, here, showWarnings, warningNames, minVotes, mood)).join("")
             : `<p class="empty">No chapters listed for this book yet.</p>`}
         </div>
         <div class="rate-cta">
@@ -311,6 +343,15 @@ async function renderBook(slug) {
       draw();
       if (v !== "") document.getElementById(`ch-${v}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
+    view.querySelectorAll("[data-mood]").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        const y = window.scrollY;
+        // Tapping the selected mood again clears it.
+        store.set("mood", store.get("mood", null) === btn.dataset.mood ? null : btn.dataset.mood);
+        draw();
+        window.scrollTo(0, y);
+      }),
+    );
     view.querySelectorAll("[data-cw]").forEach((btn) =>
       btn.addEventListener("click", () => {
         const y = window.scrollY;
