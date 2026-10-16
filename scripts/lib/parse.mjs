@@ -20,12 +20,24 @@ export function extractRouterState(html) {
   return vm.runInContext(`(${expr})`, context, { timeout: 1000 });
 }
 
-// Loader data for the first match whose id starts with `routePrefix`
-// (match ids look like "book$slugbookthey-both-die-at-the-end").
-export function extractLoaderData(html, routePrefix) {
+// Match ids are route segments joined by separators: on the live site
+// "\0book\0$slug\0book\0they-both-die-at-the-end" (NULs, which vanish
+// when a page is copied from view-source). Compare with separators removed.
+const normalizeId = (id) => id.replace(/[\0�/]/g, "");
+
+// Loader data for the route match whose id starts with `routePrefix`
+// (e.g. "book$slug"). If none does, fall back to the match whose loader
+// data has the shape `shape` checks for.
+export function extractLoaderData(html, routePrefix, shape = (l) => l?.book && Array.isArray(l?.chapters)) {
   const state = extractRouterState(html);
-  const match = state.matches?.find((m) => typeof m.i === "string" && m.i.startsWith(routePrefix));
-  if (!match) throw new Error(`No route match starting with "${routePrefix}"`);
+  const matches = state.matches ?? [];
+  const match =
+    matches.find((m) => typeof m.i === "string" && normalizeId(m.i).startsWith(normalizeId(routePrefix))) ??
+    matches.find((m) => shape(m.l));
+  if (!match) {
+    const ids = matches.map((m) => JSON.stringify(m.i)).join(", ");
+    throw new Error(`No route match for "${routePrefix}" (matches: ${ids || "none"})`);
+  }
   if (match.s !== "success") throw new Error(`Route "${match.i}" status is ${match.s}`);
   return match.l;
 }

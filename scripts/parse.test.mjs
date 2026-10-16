@@ -12,6 +12,17 @@ test("extracts book loader data from a real page", () => {
   assert.equal(l.ratings["6a1e12cd-b743-4e83-ad5b-151355afed04"].average, 5);
 });
 
+test("matches live-site ids that contain NUL separators", () => {
+  const live = html.replaceAll('"book$slugbookthey-both-die-at-the-end"', '"\\u0000book\\u0000$slug\\u0000book\\u0000they-both-die-at-the-end"');
+  assert.notEqual(live, html);
+  assert.equal(extractLoaderData(live, "book$slug").book.slug, "they-both-die-at-the-end");
+});
+
+test("falls back to the match holding book data when ids change", () => {
+  const renamed = html.replaceAll('"book$slugbookthey-both-die-at-the-end"', '"/books/$id/they-both-die-at-the-end"');
+  assert.equal(extractLoaderData(renamed, "book$slug").book.slug, "they-both-die-at-the-end");
+});
+
 test("normalizes chapters in display order and hides averages below the vote minimum", () => {
   const book = normalizeBook(extractLoaderData(html, "book$slug"));
   assert.deepEqual(book.chapters.map((c) => c.number), [1, 2, 3, 4]);
