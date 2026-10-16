@@ -263,11 +263,12 @@ html.text-xl { font-size: 125%; }
 .tabbar a[aria-current="page"] { color: var(--foreground); }
 .tabbar a[aria-current="page"] svg { background: var(--primary); color: var(--primary-foreground); border: 2px solid var(--foreground); border-radius: 999px; padding: 2px 12px; width: 52px; height: 30px; box-shadow: 2px 2px 0 var(--foreground); }
 
-/* Computers (mouse or trackpad) never get the bottom bar: the tabs sit in a
-   sticky header when there's room, and in a hamburger menu when there isn't.
-   Touch devices keep the bottom bar. */
+/* The bottom bar is for phones only. Any window 768px or wider gets the tabs
+   in a sticky header; a narrower window on a computer (mouse or trackpad)
+   gets a hamburger menu instead. Width decides first, because some desktop
+   browsers misreport their pointer. */
 .menu-btn { display: none; }
-@media (hover: hover) and (pointer: fine) {
+@media (min-width: 768px), (hover: hover) and (pointer: fine) {
   .nav { position: sticky; top: 0; z-index: 50; background: var(--background); padding-top: 10px; padding-bottom: 10px; }
   .tabbar { position: static; display: flex; gap: 6px; padding: 0; border: 0; background: none; }
   .tabbar a { flex-direction: row; justify-content: flex-start; gap: 8px; min-height: 40px; padding: 6px 14px; font-size: .8rem; border: 2px solid transparent; border-radius: 999px; }
